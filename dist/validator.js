@@ -62,7 +62,8 @@
     },
     help: {
       default: 'help-block',
-      error: 'with-errors'
+      error: 'with-errors',
+      list: 'list-unstyled'
     }
   }
 
@@ -171,7 +172,7 @@
       if (!errors.length) return
 
       errors = $('<ul/>')
-        .addClass('list-unstyled')
+        .addClass(this.options.help.list)
         .append($.map(errors, function (error) { return $('<li/>')[method](error) }))
 
       $block.data('bs.validator.originalContent') === undefined && $block.data('bs.validator.originalContent', $block.html())
