@@ -52,12 +52,22 @@
     },
     feedback: {
       success: 'glyphicon-ok',
-      error: 'glyphicon-warning-sign'
+      error: 'glyphicon-warning-sign',
+      default: 'form-control-feedback'
+    },
+    group: {
+      default: 'form-group',
+      error: 'has-error',
+      success: 'has-success'
+    },
+    help: {
+      default: 'help-block',
+      error: 'with-errors'
     }
   }
 
   Validator.VALIDATORS = {
-    native: function ($el) {
+    'native': function ($el) {
       var el = $el[0]
       return el.checkValidity ? el.checkValidity() : true
     },
@@ -153,9 +163,9 @@
     var method = this.options.html ? 'html' : 'text'
 
     this.defer($el, function () {
-      var $group = $el.closest('.form-group')
-      var $block = $group.find('.help-block.with-errors')
-      var $feedback = $group.find('.form-control-feedback')
+      var $group = $el.closest('.' + this.options.group.default)
+      var $block = $group.find('.' + this.options.help.default + '.' + this.options.help.error)
+      var $feedback = $group.find('.' + this.options.feedback.default)
       var errors = $el.data('bs.validator.errors')
 
       if (!errors.length) return
@@ -166,27 +176,27 @@
 
       $block.data('bs.validator.originalContent') === undefined && $block.data('bs.validator.originalContent', $block.html())
       $block.empty().append(errors)
-      $group.addClass('has-error')
+      $group.addClass(this.options.group.error)
 
       $feedback.length
         && $feedback.removeClass(this.options.feedback.success)
         && $feedback.addClass(this.options.feedback.error)
-        && $group.removeClass('has-success')
+        && $group.removeClass(this.options.group.success)
     })
   }
 
   Validator.prototype.clearErrors = function ($el) {
-    var $group = $el.closest('.form-group')
-    var $block = $group.find('.help-block.with-errors')
-    var $feedback = $group.find('.form-control-feedback')
+    var $group = $el.closest('.' + this.options.group.default)
+    var $block = $group.find('.' + this.options.help.default + '.' + this.options.help.error)
+    var $feedback = $group.find('.' + this.options.feedback.default)
 
     $block.html($block.data('bs.validator.originalContent'))
-    $group.removeClass('has-error')
+    $group.removeClass(this.options.group.error)
 
     $feedback.length
       && $feedback.removeClass(this.options.feedback.error)
       && $feedback.addClass(this.options.feedback.success)
-      && $group.addClass('has-success')
+      && $group.addClass(this.options.group.success)
   }
 
   Validator.prototype.hasErrors = function () {
@@ -243,7 +253,7 @@
         window.clearTimeout(timeout) && $this.removeData('bs.validator.timeout')
       })
 
-    this.$element.find('.help-block.with-errors').each(function () {
+    this.$element.find('.' + this.options.help.default + '.' + this.options.help.error).each(function () {
       var $this = $(this)
       var originalContent = $this.data('bs.validator.originalContent')
 
@@ -254,7 +264,7 @@
 
     this.$element.find('input[type="submit"], button[type="submit"]').removeClass('disabled')
 
-    this.$element.find('.has-error').removeClass('has-error')
+    this.$element.find('.' + this.options.group.error).removeClass(this.options.group.error)
 
     return this
   }
